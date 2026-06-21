@@ -1,19 +1,5 @@
 /**
  * BRILLIANT TOKYO CLUB - セッション予約管理
- *
- * スプレッドシートのタブ構成：
- * 1. "予約" タブ: 個別の予約記録（タイムスタンプ, セッションID, 名前, 連絡先）
- * 2. "セッション" タブ: セッションマスタ（セッションID, 日付, 時間, 場所, 定員）
- *
- * セットアップ手順：
- * 1. 新規スプレッドシートを作成
- * 2. シート名を "予約" に変更し、1行目に見出し：
- *    タイムスタンプ | セッションID | お名前 | 連絡先
- * 3. 新しいシートを追加して "セッション" という名前にし、1行目に見出し：
- *    セッションID | 日付 | 時間 | 場所 | 定員
- *    2行目以降に各セッションを入力（下記の初期データ参照）
- * 4. 拡張機能 → Apps Script にこのコードを貼り付け
- * 5. デプロイ → 新しいデプロイ → ウェブアプリ → アクセス「全員」
  */
 
 function doPost(e) {
@@ -44,7 +30,6 @@ function handleBooking(data) {
   const name = data.name;
   const contact = data.contact;
 
-  // 定員チェック
   const sessionData = sessionSheet.getDataRange().getValues();
   let capacity = 0;
   let sessionFound = false;
@@ -62,7 +47,6 @@ function handleBooking(data) {
     ).setMimeType(ContentService.MimeType.JSON);
   }
 
-  // 現在の予約数をカウント
   const bookingData = bookingSheet.getDataRange().getValues();
   let currentCount = 0;
   for (let i = 1; i < bookingData.length; i++) {
@@ -77,10 +61,8 @@ function handleBooking(data) {
     ).setMimeType(ContentService.MimeType.JSON);
   }
 
-  // 予約を記録
   bookingSheet.appendRow([new Date(), sessionId, name, contact]);
 
-  // 通知メール（任意・不要なら下3行削除）
   const notifyEmail = "daichiyamazaki.jpn@gmail.com";
   MailApp.sendEmail(notifyEmail, "【BRILLIANT TOKYO CLUB】新規予約: " + name,
     "セッションID: " + sessionId + "\nお名前: " + name + "\n連絡先: " + contact);
@@ -122,8 +104,6 @@ function getSessionsWithCounts() {
   ).setMimeType(ContentService.MimeType.JSON);
 }
 
-// スプレッドシートのセルが時刻型(Date)として保存されている場合でも
-// "19:00" のような文字列に変換する
 function formatTimeValue(value) {
   if (Object.prototype.toString.call(value) === '[object Date]') {
     const hours = String(value.getHours()).padStart(2, '0');
