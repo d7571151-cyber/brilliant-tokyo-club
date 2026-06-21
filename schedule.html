@@ -35,8 +35,9 @@ body{background:var(--white);color:var(--black);font-family:'Space Grotesk',sans
 .session-card{background:var(--paper);border:1px solid var(--border);border-radius:6px;margin-bottom:1rem;overflow:hidden}
 .session-header{padding:1.3rem 1.3rem 1rem;border-bottom:1px solid var(--border)}
 .session-date{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem}
-.session-time{font-weight:700;font-size:32px;letter-spacing:0.01em;line-height:1;color:var(--black)}
-.session-time span{font-size:18px;color:var(--muted);font-weight:500;letter-spacing:0.02em}
+.session-time{font-weight:700;font-size:32px;letter-spacing:0.01em;line-height:1;color:var(--black);display:flex;align-items:baseline;gap:10px}
+.session-time .time-sep{font-size:24px;color:var(--muted);font-weight:400}
+.session-time .time-end{font-size:32px;color:var(--black);font-weight:700}
 .session-meta{margin-top:0.7rem;display:flex;gap:1.5rem;flex-wrap:wrap}
 .session-meta-item{font-size:11px;color:var(--muted);letter-spacing:0.03em;display:flex;align-items:center;gap:5px}
 .dot{width:5px;height:5px;border-radius:50%;background:var(--gold);flex-shrink:0}
@@ -171,9 +172,11 @@ function render() {
 }
 
 function sessionCard(s) {
-  const isFull = s.count >= s.capacity;
+  const capacity = Number(s.capacity) || 0;
+  const count = Number(s.count) || 0;
+  const isFull = capacity > 0 && count >= capacity;
   const isJoined = joined[s.id];
-  const pct = Math.min(100, (s.count / s.capacity) * 100);
+  const pct = capacity > 0 ? Math.min(100, (count / capacity) * 100) : 0;
 
   let actionBtn = '';
   if (isJoined) {
@@ -188,7 +191,7 @@ function sessionCard(s) {
   <div class="session-card" id="card-${s.id}">
     <div class="session-header">
       <div class="session-date">${s.date}</div>
-      <div class="session-time">${s.time}${s.endTime ? ` <span>– ${s.endTime}</span>` : ''}</div>
+      <div class="session-time">${s.time}${s.endTime ? `<span class="time-sep">–</span><span class="time-end">${s.endTime}</span>` : ''}</div>
       <div class="session-meta">
         <div class="session-meta-item"><div class="dot"></div>${s.location}</div>
         <div class="session-meta-item">キャンセル前日まで</div>
@@ -197,7 +200,7 @@ function sessionCard(s) {
     <div class="capacity-area">
       <div class="capacity-row">
         <span class="capacity-label">参加者</span>
-        <span class="capacity-count">${s.count} / ${s.capacity}</span>
+        <span class="capacity-count">${count} / ${capacity}</span>
       </div>
       <div class="capacity-bar"><div class="capacity-fill ${isFull?'full':''}" style="width:${pct}%"></div></div>
     </div>
