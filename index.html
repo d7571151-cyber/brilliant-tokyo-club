@@ -228,7 +228,7 @@ body{background:var(--white);color:var(--black);font-family:'Space Grotesk',sans
 <div class="toast" id="toast"></div>
 
 <script>
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyy97HE-KN7LI1eQPpbGytI6iC50u32ZltkSQIWHY_3uk5foDOc6LVwLP7OCnggZy6L-g/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzN3zxV2DLQcmNxovMFvZfLS1fUrPB2czxGTh2-OeIXAWCOF91GpBllYCuPVfX1_4LB4Q/exec";
 
 document.getElementById('registration-form').addEventListener('submit', function(e) {
   e.preventDefault();
@@ -238,6 +238,7 @@ document.getElementById('registration-form').addEventListener('submit', function
   submitBtn.textContent = '送信中...';
 
   const payload = {
+    action: 'register',
     name: document.getElementById('name').value,
     email: document.getElementById('email').value,
     phone: document.getElementById('phone').value,
